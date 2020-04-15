@@ -1,5 +1,6 @@
 import tkinter as Tkinter
 import time
+import webbrowser
 
 #root = Tk()
 #root.withdraw()
@@ -52,9 +53,10 @@ class Popup:
         link = Tkinter.Text(root, padx=5, pady=5, height=4, bg="white")
         link.tag_config("url", foreground="blue", font=("helvetica", 10, "bold"))
         link.insert(Tkinter.INSERT, item.get_link(), "url")
-        
-        link.config(state=Tkinter.DISABLED, relief=Tkinter.FLAT)
+        link.config(state=Tkinter.NORMAL, relief=Tkinter.FLAT)
         link.grid(sticky=Tkinter.W+Tkinter.E)
+        
+        # Tkinter.Button(root, text = "Web link", command=webbrowser.open(item.get_link(),new=1))
 
     def newWindow(self, item):
         """

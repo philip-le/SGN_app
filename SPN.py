@@ -9,6 +9,7 @@ from news_gui import Popup
 import readability
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+from joblib import Parallel, delayed
 
 #======================
 '''
@@ -23,6 +24,20 @@ ToDO:
 #======================
 # Code for retrieving and parsing Google and Yahoo News feeds
 #======================
+def fprocess(entry):
+    guid = entry.guid
+    title = entry.title.split(" - ")[0]
+    published = entry.published
+    source = entry.source.title
+    link = entry.link
+
+    web_content = readability.Document(requests.get(link).text)
+    summary = translate_html(web_content.summary())
+
+    newsStory = NewsStory(guid, title, summary, published, source, link)
+    return newsStory
+
+
 
 def process(url):
     """
@@ -31,18 +46,7 @@ def process(url):
     """
     feed = feedparser.parse(url)
     entries = feed.entries
-    ret = []
-    for entry in entries:
-        guid = entry.guid
-        title = entry.title.split(" - ")[0]
-        published = entry.published
-        source = entry.source.title
-        link = entry.link
-        web_content = readability.Document(requests.get(link).text)
-        summary = translate_html(web_content.summary())
-        newsStory = NewsStory(guid, title, summary, published, source, link)
-
-        ret.append(newsStory)
+    ret = Parallel(n_jobs=7)(delayed(fprocess)(entry) for entry in entries)
     return ret
 
 #======================
@@ -205,7 +209,7 @@ def readTriggerConfig(filename):
   
 import _thread as thread
 
-def main_thread(p):
+def main_thread(popup):
     # A sample trigger list - you'll replace
     # t1 = SubjectTrigger("world")
     # t2 = SummaryTrigger("good")
@@ -221,11 +225,14 @@ def main_thread(p):
     
     while True:
         print("Polling...")
+        start = time.time()
 
         # Get stories from Google's Top Stories RSS news feed
         stories = process("http://news.google.com/?output=rss")
         # Get stories from Yahoo's Top Stories RSS news feed
         stories.extend(process("http://rss.news.yahoo.com/rss/topstories"))
+
+        print(f'Loading web data took {time.time()-start} seconds')
 
         # Only select stories we're interested in
         stories = filter_stories(stories, triggerlist)
@@ -241,22 +248,23 @@ def main_thread(p):
             pol_score = sia.polarity_scores(story.get_summary())
             pol_score['headline'] = story.get_title()
             story.set_score(pol_score)
-            if (story.get_guid() not in guidShown) & (pol_score['compound'] > 0.51) & (pol_score['pos'] > 0.1):
+            if (story.get_guid() not in guidShown) & (pol_score['compound'] > 0.5)\
+                & (pol_score['pos'] > 0.1) & (pol_score['neg'] < 0.07) :
                 newstories.append(story)
 
         
         for story in newstories:
             guidShown.append(story.get_guid())
-            print(f'************{story.get_title()}**{story.score}****************')
+            print(f'***************{story.get_title()}**{story.score}****************')
             print(story.get_summary())
-            p.newWindow(story)
+            popup.newWindow(story)
 
         print("Sleeping...")
         time.sleep(SLEEPTIME)
 
-SLEEPTIME = 30 #seconds -- how often we poll
+SLEEPTIME = 300 #seconds -- how often we poll
 if __name__ == '__main__':
-    p = Popup()
-    thread.start_new_thread(main_thread, (p,))
-    p.start()
+    popup = Popup()
+    thread.start_new_thread(main_thread, (popup,))
+    popup.start()
 
