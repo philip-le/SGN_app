@@ -7,13 +7,21 @@ import time
 from project_util import translate_html
 from news_gui import Popup
 import readability
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 
+#======================
+'''
+ToDO:
+1. Multi-thread running the code
+2. Why we query the page quite slowly?
+3. Build an interface
+'''
+#======================
 #-----------------------------------------------------------------------
 
 #======================
-# Code for retrieving and parsing
-# Google and Yahoo News feeds
-# Do not change this code
+# Code for retrieving and parsing Google and Yahoo News feeds
 #======================
 
 def process(url):
@@ -47,6 +55,7 @@ def process(url):
 class NewsStory(object):
     def __init__(self, guid, title, summary, published, source, link):
         self.string = [guid, title, summary, published, source, link]
+        self.score = {}
     def get_guid(self):
         return self.string[0]
     def get_title(self):
@@ -59,6 +68,9 @@ class NewsStory(object):
         return self.string[4]
     def get_link(self):
         return self.string[5]
+    def set_score(self, news_score):
+        self.score = news_score
+
 
 
 # Triggers class
@@ -195,7 +207,6 @@ import _thread as thread
 
 def main_thread(p):
     # A sample trigger list - you'll replace
-    # this with something more configurable in Problem 11
     # t1 = SubjectTrigger("world")
     # t2 = SummaryTrigger("good")
     # t3 = PhraseTrigger("positive")
@@ -221,13 +232,23 @@ def main_thread(p):
     
         # Don't print a story if we have already printed it before
         newstories = []
+
+        # Let's do some sentiment analysis
+        sia = SIA()
+
         for story in stories:
-            if story.get_guid() not in guidShown:
+            # generate the news_score: 'compound', 'headline', 'neg', 'neu', 'pos'
+            pol_score = sia.polarity_scores(story.get_summary())
+            pol_score['headline'] = story.get_title()
+            story.set_score(pol_score)
+            if (story.get_guid() not in guidShown) & (pol_score['compound'] > 0.51) & (pol_score['pos'] > 0.1):
                 newstories.append(story)
+
         
         for story in newstories:
             guidShown.append(story.get_guid())
-            print(story.get_title(), story.get_summary())
+            print(f'************{story.get_title()}**{story.score}****************')
+            print(story.get_summary())
             p.newWindow(story)
 
         print("Sleeping...")

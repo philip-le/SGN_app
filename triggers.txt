@@ -6,17 +6,18 @@
 t1 TITLE data
 
 # summary trigger named t2
-t2 SUMMARY AI
+t2 SUMMARY leader
 
 # phrase trigger named t3
-t3 PHRASE Machine
+t3 PHRASE Learning
 
 # summary trigger named t4
-t4 SUMMARY Learning
+t4 SUMMARY AI
 
-
+# Summary text
 t5 OR t2 t4
 
+# and the PHRASE is very important word
 t6 OR t5 t3
 
 # the trigger set contains t1 and t4
