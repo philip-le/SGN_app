@@ -36,8 +36,8 @@ class Popup:
         title.tag_config("title", foreground="black", font=("helvetica", 12, "bold"))
         title.tag_config("subject", foreground="black", font=("helvetica", 12, "bold"))
         title.insert(Tkinter.INSERT, "Title: %s" % item.get_title(), "title")
-        title.insert(Tkinter.INSERT, "\nSubject: ", "subject")
-        title.insert(Tkinter.INSERT, item.get_subject().rstrip(), "subject")    
+        # title.insert(Tkinter.INSERT, "\nSubject: ", "subject")
+        # title.insert(Tkinter.INSERT, item.get_subject().rstrip(), "subject")    
         
         title.config(state=Tkinter.DISABLED, relief = Tkinter.FLAT)
         title.grid(sticky=Tkinter.W+Tkinter.E)

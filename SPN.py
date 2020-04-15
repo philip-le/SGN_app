@@ -1,10 +1,12 @@
 # RSS Feed Filter
 
 import feedparser
+import requests
 import string
 import time
 from project_util import translate_html
 from news_gui import Popup
+import readability
 
 #-----------------------------------------------------------------------
 
@@ -24,15 +26,14 @@ def process(url):
     ret = []
     for entry in entries:
         guid = entry.guid
-        title = translate_html(entry.title)
-        link = entry.link
+        title = entry.title.split(" - ")[0]
         published = entry.published
-        source = entry.source
-        try:
-            summary = translate_html(entry.summary)
-        except AttributeError:
-            summary = ''
+        source = entry.source.title
+        link = entry.link
+        web_content = readability.Document(requests.get(link).text)
+        summary = translate_html(web_content.summary())
         newsStory = NewsStory(guid, title, summary, published, source, link)
+
         ret.append(newsStory)
     return ret
 
@@ -121,7 +122,7 @@ class PhraseTrigger(Trigger):
         self.astring = astring
     
     def evaluate(self, story):
-        return (self.astring in story.get_title()) | (self.astring in story.get_subject()) | (self.astring in story.get_summary())
+        return (self.astring in story.get_title()) | (self.astring in story.get_summary())
     
 
 def filter_stories(stories, triggerlist):
@@ -195,9 +196,9 @@ import _thread as thread
 def main_thread(p):
     # A sample trigger list - you'll replace
     # this with something more configurable in Problem 11
-    # t1 = SubjectTrigger("Coronavirus")
-    # t2 = SummaryTrigger("hospital")
-    # t3 = PhraseTrigger("virus symptoms")
+    # t1 = SubjectTrigger("world")
+    # t2 = SummaryTrigger("good")
+    # t3 = PhraseTrigger("positive")
     # t4 = OrTrigger(t2, t3)
     # triggerlist = [t1, t4]
     
@@ -226,7 +227,7 @@ def main_thread(p):
         
         for story in newstories:
             guidShown.append(story.get_guid())
-            print(story.get_title(), story.get_subject(), story.get_summary())
+            print(story.get_title(), story.get_summary())
             p.newWindow(story)
 
         print("Sleeping...")
