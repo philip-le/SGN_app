@@ -41,8 +41,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
+* Inspiration by MITx
 * Hat tip to anyone whose code was used
-* Inspiration from MITx
-* Udacity 
 
 
