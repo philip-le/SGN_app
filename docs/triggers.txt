@@ -3,10 +3,10 @@
 #  news stories!
 
 # title trigger named t1
-t1 TITLE AI
+t1 TITLE Coronavirus
 
 # summary trigger named t2
-t2 SUMMARY AI
+t2 SUMMARY Coronavirus
 
 # phrase trigger named t3
 t3 PHRASE data

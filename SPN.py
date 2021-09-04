@@ -215,12 +215,11 @@ import _thread as thread
 
 rss_news_sources = [
     "http://rss.news.yahoo.com/rss/topstories",
-    "http://rss.cnn.com/rss/cnn_topstories.rss",
+    "http://rss.cnn.com/rss",
     "https://archive.nytimes.com/www.nytimes.com/services/xml/rss",
-    "https://www.huffpost.com/section/front-page/feed?x=1",
     "https://lifehacker.com/rss",
     "https://www.reuters.com/tools/rss",
-    "https://www.latimes.com/local/rss2.0.xml"
+    "https://www.latimes.com/local/rss"
 ]
 
 def main_thread(popup):
@@ -248,7 +247,7 @@ def main_thread(popup):
             try:
                 stories.extend(process(rss_source))
                 print(f"Add the source of {rss_source}")
-            except AttributeError:
+            except:
                 pass
 
         print(f'Loading web data took {time.time()-start} seconds')
