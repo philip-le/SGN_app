@@ -1,0 +1,7 @@
+feedparser>=6.0.8
+joblib>=1.0.1
+html2text>=2020.1.16
+nltk>=3.6.2
+readability-lxml>=0.8.1
+requests>=2.26.0
+sgmllib3k>=1.0.0
