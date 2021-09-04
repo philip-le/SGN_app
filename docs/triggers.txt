@@ -21,5 +21,5 @@ t5 OR t2 t4
 t6 OR t5 t3
 
 # the trigger set contains t1 and t4
-ADD t1 t6
+ADD t1 t4
 
