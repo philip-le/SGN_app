@@ -16,13 +16,18 @@ What things you need to install the software and how to install them
 ```
 python3.6
 Google News
+
 ```
 
 
-### Installing
+### Installing & running the main code
 
 A step by step series of examples that tell you how to get a development env running will be given later.
 
+```
+pip install -r requirements.txt
+python SPN.py
+```
 
 ## Versioning
 
@@ -41,7 +46,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Inspiration by MITx
-* Hat tip to anyone whose code was used
+* Inspiration by SGP YouTube programme
+* Utilize some template code from MIT-6.00.x
+* Hat tip to any support for this projects
 
 
