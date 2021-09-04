@@ -4,10 +4,11 @@ import feedparser
 import requests
 import string
 import time
-from project_util import translate_html
-from news_gui import Popup
+from utils.project_util import translate_html
+from utils.news_gui import Popup
 import readability
 import nltk
+nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 from joblib import Parallel, delayed
 
@@ -219,7 +220,7 @@ def main_thread(popup):
     
     # # TODO: Problem 11
     # # After implementing readTriggerConfig, uncomment this line 
-    triggerlist = readTriggerConfig("triggers.txt")
+    triggerlist = readTriggerConfig("./docs/triggers.txt")
 
     guidShown = []
     
