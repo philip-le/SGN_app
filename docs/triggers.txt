@@ -3,23 +3,23 @@
 #  news stories!
 
 # title trigger named t1
-t1 TITLE data
+t1 TITLE AI
 
 # summary trigger named t2
-t2 SUMMARY leader
+t2 SUMMARY AI
 
 # phrase trigger named t3
-t3 PHRASE Learning
+t3 PHRASE data
 
 # summary trigger named t4
-t4 SUMMARY AI
+t4 PHRASE data
 
 # Summary text
 t5 OR t2 t4
 
 # and the PHRASE is very important word
-t6 OR t5 t3
+t6 OR t1 t3
 
 # the trigger set contains t1 and t4
-ADD t1 t4
+ADD t5 t6
 

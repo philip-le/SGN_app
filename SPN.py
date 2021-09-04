@@ -212,6 +212,17 @@ def readTriggerConfig(filename):
   
 import _thread as thread
 
+
+rss_news_sources = [
+    "http://rss.news.yahoo.com/rss/topstories",
+    "http://rss.cnn.com/rss/cnn_topstories.rss",
+    "https://archive.nytimes.com/www.nytimes.com/services/xml/rss",
+    "https://www.huffpost.com/section/front-page/feed?x=1",
+    "https://lifehacker.com/rss",
+    "https://www.reuters.com/tools/rss",
+    "https://www.latimes.com/local/rss2.0.xml"
+]
+
 def main_thread(popup):
     # A sample trigger list - you'll replace
     # t1 = SubjectTrigger("world")
@@ -233,7 +244,12 @@ def main_thread(popup):
         # Get stories from Google's Top Stories RSS news feed
         stories = process("http://news.google.com/?output=rss")
         # Get stories from Yahoo's Top Stories RSS news feed
-        stories.extend(process("http://rss.news.yahoo.com/rss/topstories"))
+        for rss_source in rss_news_sources:
+            try:
+                stories.extend(process(rss_source))
+                print(f"Add the source of {rss_source}")
+            except AttributeError:
+                pass
 
         print(f'Loading web data took {time.time()-start} seconds')
 
@@ -251,8 +267,8 @@ def main_thread(popup):
             pol_score = sia.polarity_scores(story.get_summary())
             pol_score['headline'] = story.get_title()
             story.set_score(pol_score)
-            if (story.get_guid() not in guidShown) & (pol_score['compound'] > 0.5)\
-                & (pol_score['pos'] > 0.1) & (pol_score['neg'] < 0.07) :
+            if (story.get_guid() not in guidShown) \
+                & (pol_score['pos'] > 0.03) & (pol_score['neg'] < 0.1) :
                 newstories.append(story)
 
         
@@ -265,7 +281,7 @@ def main_thread(popup):
         print("Sleeping...")
         time.sleep(SLEEPTIME)
 
-SLEEPTIME = 300 #seconds -- how often we poll
+SLEEPTIME = 10 #seconds -- how often we poll
 if __name__ == '__main__':
     popup = Popup()
     thread.start_new_thread(main_thread, (popup,))
